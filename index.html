@@ -1,108 +1,673 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>الصفحة الرئيسية - الموقع الشخصي</title>
-    <link rel="stylesheet" href="pag_css/index.css">
-    <link rel="stylesheet" href="style.css">
+import React, { useMemo, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Crown, Search, ArrowRight, Filter, Star, Flame, Rocket, Globe, Heart, Award, ChevronRight, ChevronLeft, X, PlusCircle, Users } from "lucide-react";
 
+/**
+ * Awards Hub — Awwwards‑style (React SPA, single file)
+ * ----------------------------------------------------------------------
+ * • Single-file demo that mimics the look/feel and core flows (NOT brand)
+ * • Pages: Home, Awards (Nominees, Winners), Submit, Directory, Academy,
+ *          Jobs, Market, Collections, Auth (Sign in / Create account)
+ * • Features: SOTD card, nominees grid + weighted voting, filters,
+ *             fake search, client-side routing, modal forms
+ * • Stack: React + Tailwind + Framer Motion + Lucide icons
+ *
+ * NOTE: All data here is mock (in‑memory). Replace with real API later.
+ */
 
-</head>
-<body>
+// ------------------------------
+// Mini Client Router
+// ------------------------------
+const routes = [
+  "home",
+  "awards/nominees",
+  "awards/winners",
+  "submit",
+  "directory",
+  "academy",
+  "jobs",
+  "market",
+  "collections",
+  "auth/signin",
+  "auth/create",
+] as const;
 
-    <nav class="navbar">
+function useRouter() {
+  const [path, setPath] = useState<typeof routes[number]>("home");
+  const push = (p) => setPath(p);
+  return { path, push };
+}
 
-        <div class="nav-container">
+// ------------------------------
+// Mock Data
+// ------------------------------
+const trendingTags = [
+  { label: "Portfolio", icon: Rocket },
+  { label: "E‑commerce", icon: Globe },
+  { label: "3D / WebGL", icon: Flame },
+  { label: "Motion", icon: Rocket },
+  { label: "Experimental", icon: Star },
+];
 
-            <ul class="nav-menu">
-                <li><a href="index.html" class="nav-link">الرئيسية</a></li>
-                <li><a href="about.html" class="nav-link"> عني</a></li>
-                <li><a href="skills.html" class="nav-link">المهارات</a></li>
-                <li><a href="projects.html" class="nav-link">المشاريع</a></li>
-                <li><a href="contact.html" class="nav-link">تواصل معنا</a></li>
-                <li><a href="login.html" class="nav-link">تسجيل الدخول</a></li>
-                <li><a href="sigin.html" class="nav-link">انشاء حساب</a></li>
+const tech = ["React", "Next.js", "Vue", "Svelte", "Webflow", "WordPress", "Shopify"];
+
+const studios = [
+  { id: 1, name: "Atlas Lab", country: "YE", specialties: ["Web", "Motion"], website: "#" },
+  { id: 2, name: "Kali Works", country: "ES", specialties: ["E‑commerce", "3D"], website: "#" },
+  { id: 3, name: "Nova Studio", country: "US", specialties: ["Brand", "Web"], website: "#" },
+  { id: 4, name: "Desert Pixel", country: "AE", specialties: ["WebGL", "Experiments"], website: "#" },
+];
+
+const generateNominees = (n = 18) =>
+  Array.from({ length: n }).map((_, i) => ({
+    id: i + 1,
+    title: `Project ${i + 1}`,
+    studio: studios[i % studios.length].name,
+    cover: `https://picsum.photos/seed/awhub-${i}/800/600`,
+    country: ["ES", "US", "FR", "JP", "DE", "YE"][i % 6],
+    score: Number((6.3 + (i % 30) / 10).toFixed(2)),
+    badges: [i % 5 === 0 ? "Developer Award" : null, i % 3 === 0 ? "Honors" : null].filter(Boolean),
+  }));
+
+const initialNominees = generateNominees(18);
+
+// Winner sample
+const recentWinners = [
+  {
+    id: 101,
+    title: "NITEX — Digital Fabric Commerce",
+    studio: "Kali Works",
+    cover: "https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=1920&auto=format&fit=crop",
+    scores: { design: 7.8, usability: 7.3, creativity: 7.6, content: 7.1 },
+    date: "Today",
+  },
+];
+
+// ------------------------------
+// Weighted Score Helper
+// ------------------------------
+const WEIGHTS = { design: 0.4, usability: 0.3, creativity: 0.2, content: 0.1 } as const;
+function computeWeightedAverage(s) {
+  return (
+    s.design * WEIGHTS.design +
+    s.usability * WEIGHTS.usability +
+    s.creativity * WEIGHTS.creativity +
+    s.content * WEIGHTS.content
+  );
+}
+
+// ------------------------------
+// Root App
+// ------------------------------
+export default function App() {
+  const router = useRouter();
+  const [query, setQuery] = useState("");
+  const [voteMap, setVoteMap] = useState({});
+
+  const filtered = useMemo(() => {
+    if (!query) return initialNominees;
+    return initialNominees.filter(n =>
+      [n.title, n.studio, n.country].join(" ").toLowerCase().includes(query.toLowerCase())
+    );
+  }, [query]);
+
+  function castVote(id, scores) {
+    setVoteMap((prev) => ({ ...prev, [id]: scores }));
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-white to-zinc-50 text-zinc-900">
+      <TopBar router={router} query={query} setQuery={setQuery} />
+      <main className="mx-auto max-w-7xl px-4 md:px-6 lg:px-8">
+        <AnimatePresence mode="wait">
+          {router.path === "home" && (
+            <motion.div key="home" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}>
+              <SOTD winner={recentWinners[0]} />
+              <Filters />
+              <NomineesGrid items={filtered} voteMap={voteMap} onVote={castVote} />
+            </motion.div>
+          )}
+
+          {router.path === "awards/nominees" && (
+            <motion.div key="nominees" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <SectionTitle title="Nominees" subtitle="Latest nominated websites open for community voting" />
+              <Filters compact />
+              <NomineesGrid items={filtered} voteMap={voteMap} onVote={castVote} pagination />
+            </motion.div>
+          )}
+
+          {router.path === "awards/winners" && (
+            <motion.div key="winners" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+              <SectionTitle title="Winners" subtitle="Site of the Day, Month, and Year highlights" />
+              <WinnersList items={recentWinners} />
+            </motion.div>
+          )}
+
+          {router.path === "submit" && <SubmitPage />}
+          {router.path === "directory" && <DirectoryPage />}
+          {router.path === "academy" && <AcademyPage />}
+          {router.path === "jobs" && <JobsPage />}
+          {router.path === "market" && <MarketPage />}
+          {router.path === "collections" && <CollectionsPage />}
+          {router.path === "auth/signin" && <AuthPage mode="signin" router={router} />}
+          {router.path === "auth/create" && <AuthPage mode="create" router={router} />}
+        </AnimatePresence>
+      </main>
+      <SiteFooter />
+    </div>
+  );
+}
+
+// ------------------------------
+// UI Sections
+// ------------------------------
+function TopBar({ router, query, setQuery }) {
+  return (
+    <header className="sticky top-0 z-30 backdrop-blur supports-[backdrop-filter]:bg-white/70 bg-white/90 border-b border-zinc-200">
+      <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-8 h-16 flex items-center gap-4">
+        <div className="flex items-center gap-4">
+          <motion.button onClick={() => router.push("home")} initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="flex items-center gap-2">
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-black text-white font-bold">A*</span>
+            <span className="font-semibold tracking-tight">Awards Hub</span>
+          </motion.button>
+          <nav className="hidden md:flex items-center gap-5 text-sm text-zinc-700">
+            <NavLink router={router} to="awards/nominees" label="Awards" icon={Crown} />
+            <NavLink router={router} to="directory" label="Directory" icon={Users} />
+            <NavLink router={router} to="academy" label="Academy" icon={Award} />
+            <NavLink router={router} to="jobs" label="Jobs" icon={BriefIcon} />
+            <NavLink router={router} to="market" label="Market" icon={CartIcon} />
+            <NavLink router={router} to="collections" label="Collections" icon={Star} />
+          </nav>
+        </div>
+        <div className="ml-auto flex items-center gap-2">
+          <div className="hidden md:flex items-center gap-2">
+            <div className="relative">
+              <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500" />
+              <input value={query} onChange={(e)=>setQuery(e.target.value)} className="pl-8 pr-3 py-2 rounded-xl border border-zinc-300 text-sm focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-zinc-400 placeholder:text-zinc-400" placeholder="Search websites, studios…" />
+            </div>
+            <button onClick={()=>router.push("auth/signin")} className="rounded-xl px-3 py-2 text-sm hover:bg-zinc-100">Sign in</button>
+            <button onClick={()=>router.push("auth/create")} className="rounded-xl px-3 py-2 text-sm bg-black text-white">Create account</button>
+          </div>
+          <button onClick={()=>router.push("submit")} className="rounded-xl px-3 py-2 text-sm bg-black text-white md:ml-2 inline-flex items-center">Submit Website<ArrowRight className="ml-2 h-4 w-4" /></button>
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function NavLink({ router, to, label, icon: Icon }) {
+  const active = router.path.startsWith(to);
+  return (
+    <button onClick={()=>router.push(to)} className={`inline-flex items-center gap-2 hover:text-black transition-colors ${active ? "text-black font-medium" : ""}`}>
+      <Icon className="h-4 w-4" />
+      <span>{label}</span>
+    </button>
+  );
+}
+
+function SOTD({ winner }) {
+  return (
+    <section className="py-8 md:py-10">
+      <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <div className="overflow-hidden rounded-3xl border border-zinc-200 shadow-sm">
+          <div className="grid md:grid-cols-5">
+            <div className="relative md:col-span-3">
+              <img src={winner.cover} alt="Site of the Day" className="h-full w-full object-cover" />
+              <div className="absolute left-4 top-4 flex items-center gap-2">
+                <span className="rounded-full bg-black text-white text-xs px-3 py-1">Site of the Day</span>
+                <span className="rounded-full bg-white/90 border border-zinc-200 text-xs px-3 py-1">{winner.date}</span>
+              </div>
+            </div>
+            <div className="md:col-span-2 p-6 md:p-8">
+              <div className="flex items-center gap-2 text-sm text-zinc-500">
+                <Crown className="h-4 w-4" /> Featured winner
+              </div>
+              <h1 className="mt-2 text-2xl md:text-3xl font-semibold tracking-tight">{winner.title}</h1>
+              <p className="mt-2 text-zinc-600">A standout experience blending subtle motion, crisp typography, and immersive storytelling.</p>
+              <div className="mt-4 flex items-center gap-3 flex-wrap">
+                <Chip>Design {winner.scores.design}</Chip>
+                <Chip>Usability {winner.scores.usability}</Chip>
+                <Chip>Creativity {winner.scores.creativity}</Chip>
+                <Chip>Content {winner.scores.content}</Chip>
+              </div>
+              <div className="mt-6 flex items-center gap-2">
+                <button className="rounded-xl px-3 py-2 text-sm bg-black text-white">View case</button>
+                <button className="rounded-xl px-3 py-2 text-sm border">All winners</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </section>
+  );
+}
+
+function Filters({ compact=false }) {
+  return (
+    <section className={`py-4 ${compact ? "pt-0" : "md:py-6"}`}>
+      <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6">
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4 text-zinc-500" />
+          <span className="text-sm font-medium">Trending</span>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          {trendingTags.map((t) => (
+            <span key={t.label} className="rounded-full bg-zinc-100 px-3 py-1 inline-flex items-center gap-1 text-sm">
+              <t.icon className="h-4 w-4" />{t.label}
+            </span>
+          ))}
+        </div>
+        <div className="md:ml-auto flex flex-wrap items-center gap-2">
+          {tech.map((t) => (
+            <button key={t} className="text-sm px-3 py-1 rounded-full border border-zinc-300 hover:border-zinc-400 hover:bg-white transition">{t}</button>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function NomineesGrid({ items, voteMap, onVote, pagination=false }) {
+  const [page, setPage] = useState(1);
+  const pageSize = 9;
+  const pages = Math.max(1, Math.ceil(items.length / pageSize));
+  const slice = pagination ? items.slice((page - 1) * pageSize, page * pageSize) : items;
+
+  return (
+    <section className="py-4 pb-12">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {slice.map((n) => (
+          <motion.div key={n.id} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.35 }}>
+            <div className="group overflow-hidden rounded-3xl border border-zinc-200 shadow-sm">
+              <div className="relative">
+                <img src={n.cover} alt={n.title} className="h-56 w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                <div className="absolute left-3 top-3 flex gap-2">
+                  {n.badges.map((b, idx) => (
+                    <span key={idx} className="rounded-full bg-black/80 text-white backdrop-blur text-xs px-3 py-1">{b}</span>
+                  ))}
+                </div>
+                <div className="absolute right-3 top-3">
+                  <ScoreChip value={(voteMap[n.id] ? computeWeightedAverage(voteMap[n.id]) : n.score).toFixed(2)} />
+                </div>
+              </div>
+              <div className="p-5">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 className="text-lg font-semibold leading-tight tracking-tight line-clamp-1">{n.title}</h3>
+                    <p className="mt-1 text-sm text-zinc-600">{n.studio} • {n.country}</p>
+                  </div>
+                  <VoteButton onVote={(scores)=>onVote(n.id, scores)} />
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+
+      {pagination && pages > 1 && (
+        <div className="mt-8 flex items-center justify-center gap-2">
+          <button disabled={page===1} onClick={()=>setPage(p=>Math.max(1,p-1))} className="rounded-xl px-3 py-2 text-sm border inline-flex items-center disabled:opacity-50"><ChevronLeft className="h-4 w-4 mr-1"/>Previous</button>
+          <span className="text-sm px-2">Page {page} / {pages}</span>
+          <button disabled={page===pages} onClick={()=>setPage(p=>Math.min(pages,p+1))} className="rounded-xl px-3 py-2 text-sm border inline-flex items-center disabled:opacity-50">Next<ChevronRight className="h-4 w-4 ml-1"/></button>
+        </div>
+      )}
+    </section>
+  );
+}
+
+function WinnersList({ items }) {
+  return (
+    <section className="pb-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {items.map((w) => (
+          <div key={w.id} className="overflow-hidden rounded-3xl border border-zinc-200 shadow-sm">
+            <div className="relative">
+              <img src={w.cover} alt={w.title} className="h-64 w-full object-cover" />
+              <div className="absolute left-4 top-4 flex items-center gap-2">
+                <span className="rounded-full bg-black text-white text-xs px-3 py-1">Site of the Day</span>
+                <span className="rounded-full bg-white/90 border border-zinc-200 text-xs px-3 py-1">{w.date}</span>
+              </div>
+            </div>
+            <div className="p-6">
+              <h3 className="text-xl font-semibold">{w.title}</h3>
+              <p className="mt-2 text-sm text-zinc-600">Weights → Design 40%, Usability 30%, Creativity 20%, Content 10%</p>
+              <div className="mt-3 flex gap-2 flex-wrap">
+                <Chip>Design {w.scores.design}</Chip>
+                <Chip>Usability {w.scores.usability}</Chip>
+                <Chip>Creativity {w.scores.creativity}</Chip>
+                <Chip>Content {w.scores.content}</Chip>
+                <Chip className="bg-emerald-600 text-white">Overall {computeWeightedAverage(w.scores).toFixed(2)}</Chip>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function SubmitPage() {
+  const [open, setOpen] = useState(false);
+  return (
+    <section className="py-10">
+      <SectionTitle title="Submit your website" subtitle="Enter details to nominate your project for awards" />
+      <div className="max-w-2xl mx-auto border rounded-2xl p-6 space-y-4">
+        <Input label="Project title" placeholder="e.g., Atlas Commerce — immersive fashion" />
+        <Input label="Project URL" placeholder="https://example.com" />
+        <Input label="Studio / Author" placeholder="Your studio name" />
+        <Input label="Country code" placeholder="e.g., ES" />
+        <Textarea label="Short description" placeholder="Tell the jury about your concept, challenges and tech stack…" />
+        <div className="flex items-center justify-between pt-2">
+          <button className="rounded-xl px-3 py-2 text-sm border inline-flex items-center"><PlusCircle className="h-4 w-4 mr-2"/>Add media</button>
+          <button onClick={()=>setOpen(true)} className="rounded-xl px-4 py-2 text-sm bg-black text-white">Pay & Submit</button>
+        </div>
+      </div>
+      <Modal open={open} onClose={()=>setOpen(false)}>
+        <h4 className="text-lg font-semibold">Payment demo</h4>
+        <p className="mt-2 text-sm text-zinc-600">This is a placeholder. Connect Stripe/PayPal on backend.</p>
+        <div className="mt-4 flex gap-2">
+          <button className="rounded-xl px-3 py-2 text-sm bg-black text-white">Proceed</button>
+          <button onClick={()=>setOpen(false)} className="rounded-xl px-3 py-2 text-sm border">Cancel</button>
+        </div>
+      </Modal>
+    </section>
+  );
+}
+
+function DirectoryPage() {
+  return (
+    <section className="py-10">
+      <SectionTitle title="Directory" subtitle="Discover top designers, studios and agencies" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        {studios.map((s) => (
+          <div key={s.id} className="rounded-2xl border p-5">
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-semibold">{s.name}</h4>
+                <p className="text-sm text-zinc-600">{s.country} • {s.specialties.join(", ")}</p>
+              </div>
+              <button className="rounded-full bg-black text-white text-xs px-3 py-1">Profile</button>
+            </div>
+            <p className="mt-3 text-sm text-zinc-600">Award‑winning studio focused on web experiences and motion.</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function AcademyPage() {
+  const plans = [
+    { name: "Basic", price: 0, perks: ["Free articles", "Limited previews"] },
+    { name: "Pro", price: 12, perks: ["100+ courses", "Certificates", "Community"] },
+    { name: "Team", price: 39, perks: ["Seats 5+", "Reports", "SAML/SSO"] },
+  ];
+  return (
+    <section className="py-10">
+      <SectionTitle title="Academy" subtitle="Learn design & front‑end from award‑winning creators" />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {plans.map((p) => (
+          <div key={p.name} className="rounded-2xl border p-6">
+            <h4 className="font-semibold text-lg">{p.name}</h4>
+            <p className="mt-1 text-3xl font-bold">${p.price}<span className="text-sm font-normal text-zinc-600">/mo</span></p>
+            <ul className="mt-3 space-y-1 text-sm text-zinc-700 list-disc pl-5">
+              {p.perks.map((x)=> <li key={x}>{x}</li>)}
             </ul>
-            <a href="index.html" class="logo">A.Rahman_Al-Hazi</a>
-        </div>
-        
-    </nav>
-
-    <!-- القسم الرئيسي -->
-    <section class="hero-section">
-        <div class="container">
-            <div class="hero-content">
-                <div class="profile-image">🛡️</div>
-                <h1 class="hero-title">Abdulrahman Al-Hazi welcomes you</h1>
-                <p class="hero-subtitle">Welcome</p>
-                <div class="hero-buttons">
-                    <a href="about.html" class="hero-btn btn-secondary"> About me</a>
-                    <a href="projects.html" class="hero-btn btn-secondary">View my work</a>
-                </div>
-            </div>
-        </div>
+            <button className="mt-4 rounded-xl px-3 py-2 text-sm bg-black text-white w-full">Start</button>
+          </div>
+        ))}
+      </div>
     </section>
+  );
+}
 
-    <section class="features-section">
-        <div class="container">
-            <h2 style="text-align: center; color: var(--primary-red); font-size: 2.5rem; margin-bottom: 1rem;">You will explore the different sections to learn about my experiences and skills.</h2>
-            <p style="text-align: center; color: var(--dark-gray); font-size: 1.2rem; margin-bottom: 2rem;"></p>
-            
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">😎</div>
-                    <h3 class="feature-title">About me</h3>
-                    <p class="feature-description">Learn about my educational and professional background, and discover my personal interests and hobbies.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <div class="feature-icon">👌</div>
-                    <h3 class="feature-title">My skills</h3>
-                    <p class="feature-description">Showcase my technical and professional skills with a level of mastery in each area.</p>
-                </div>
-               
+function JobsPage() {
+  const jobs = [
+    { id:1, title: "Senior Product Designer", company: "Atlas Lab", type: "Remote", location: "Anywhere" },
+    { id:2, title: "Front‑end Engineer (React)", company: "Kali Works", type: "Hybrid", location: "Madrid" },
+    { id:3, title: "Motion Designer", company: "Nova Studio", type: "On‑site", location: "Tokyo" },
+  ];
+  return (
+    <section className="py-10">
+      <SectionTitle title="Jobs" subtitle="Curated creative & engineering roles" />
+      <div className="space-y-3">
+        {jobs.map((j) => (
+          <div key={j.id} className="rounded-2xl border p-4 flex items-center justify-between">
+            <div>
+              <h4 className="font-semibold">{j.title}</h4>
+              <p className="text-sm text-zinc-600">{j.company} • {j.type} • {j.location}</p>
             </div>
-        </div>
+            <button className="rounded-xl px-3 py-2 text-sm border">Apply</button>
+          </div>
+        ))}
+      </div>
     </section>
+  );
+}
 
-    <section class="stats-section">
-        <div class="container">
-            <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Quick statistics</h2>
-            <p style="font-size: 1.2rem; opacity: 0.9;">A quick look at my achievements</p>
-            
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-number">9+</div>
-                    <div class="stat-label">Years of experience</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">700+</div>
-                    <div class="stat-label">Completed project</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7+</div>
-                    <div class="stat-label">Masterful skill</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7+</div>
-                    <div class="stat-label">Certificate obtained</div>
-                </div>
+function MarketPage() {
+  const products = [
+    { id:1, title: "Hero UI Kit", price: 29 },
+    { id:2, title: "3D Icons Pack", price: 19 },
+    { id:3, title: "Motion Presets", price: 24 },
+  ];
+  return (
+    <section className="py-10">
+      <SectionTitle title="Market" subtitle="Premium digital assets from top creators" />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {products.map((p) => (
+          <div key={p.id} className="rounded-2xl border p-6">
+            <div className="h-32 rounded-xl bg-zinc-100" />
+            <h4 className="mt-3 font-semibold">{p.title}</h4>
+            <p className="text-sm text-zinc-600">High‑quality asset for designers & developers</p>
+            <div className="mt-3 flex items-center justify-between">
+              <span className="font-semibold">${p.price}</span>
+              <button className="rounded-xl px-3 py-2 text-sm bg-black text-white">Buy</button>
             </div>
-        </div>
+          </div>
+        ))}
+      </div>
     </section>
+  );
+}
 
-    <footer class="footer">
-        <div class="container">
-            <p>&copy; 2025 A.Rahman_Al-Hazi. جميع الحقوق محفوظة.</p>
-            
+function CollectionsPage() {
+  const cols = [
+    { id:1, title:"Bold Typography", count: 42 },
+    { id:2, title:"Playful Motion", count: 31 },
+    { id:3, title:"3D / WebGL", count: 28 },
+  ];
+  return (
+    <section className="py-10">
+      <SectionTitle title="Collections" subtitle="Curated sets of inspiring websites" />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {cols.map((c) => (
+          <div key={c.id} className="rounded-2xl border p-6">
+            <div className="h-40 rounded-xl bg-zinc-100" />
+            <h4 className="mt-3 font-semibold">{c.title}</h4>
+            <p className="text-sm text-zinc-600">{c.count} websites</p>
+            <button className="mt-3 rounded-xl px-3 py-2 text-sm border inline-flex items-center">Open<ChevronRight className="h-4 w-4 ml-1"/></button>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+// ------------------------------
+// Voting UI
+// ------------------------------
+function VoteButton({ onVote }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <button onClick={()=>setOpen(true)} className="inline-flex items-center gap-1 text-sm rounded-full border border-zinc-300 px-3 py-1 hover:bg-zinc-50">
+        Vote <Heart className="h-4 w-4" />
+      </button>
+      <Modal open={open} onClose={()=>setOpen(false)}>
+        <h4 className="text-lg font-semibold">Cast your vote</h4>
+        <VoteForm onSubmit={(scores)=>{ onVote(scores); setOpen(false); }} />
+      </Modal>
+    </>
+  );
+}
+
+function VoteForm({ onSubmit }) {
+  const [scores, setScores] = useState({ design:7.5, usability:7.5, creativity:7.5, content:7.5 });
+  const overall = computeWeightedAverage(scores).toFixed(2);
+  function Row({ k, label }) {
+    return (
+      <div className="flex items-center gap-3">
+        <label className="w-28 text-sm">{label}</label>
+        <input type="range" min={0} max={10} step={0.1} value={scores[k]} onChange={(e)=>setScores({ ...scores, [k]: Number(e.target.value) })} className="w-full" />
+        <div className="w-12 text-right text-sm tabular-nums">{scores[k].toFixed(1)}</div>
+      </div>
+    );
+  }
+  return (
+    <div className="space-y-4">
+      <Row k="design" label="Design (40%)" />
+      <Row k="usability" label="Usability (30%)" />
+      <Row k="creativity" label="Creativity (20%)" />
+      <Row k="content" label="Content (10%)" />
+      <div className="flex items-center justify-between pt-2">
+        <span className="text-sm text-zinc-600">Overall (weighted)</span>
+        <span className="text-base font-semibold">{overall}</span>
+      </div>
+      <button onClick={()=>onSubmit(scores)} className="rounded-xl px-3 py-2 text-sm bg-black text-white w-full">Submit vote</button>
+    </div>
+  );
+}
+
+// ------------------------------
+// Auth Pages
+// ------------------------------
+function AuthPage({ mode, router }) {
+  const isCreate = mode === "create";
+  return (
+    <section className="py-10">
+      <div className="max-w-md mx-auto border rounded-2xl p-6">
+        <h3 className="text-xl font-semibold">{isCreate ? "Create account" : "Sign in"}</h3>
+        <div className="mt-4 space-y-3">
+          {isCreate && <Input label="Name" placeholder="Your name" />}
+          <Input label="Email" placeholder="you@example.com" />
+          <Input label="Password" type="password" placeholder="••••••••" />
+          <button className="w-full rounded-xl px-3 py-2 text-sm bg-black text-white">{isCreate ? "Create" : "Sign in"}</button>
+          <p className="text-xs text-zinc-600 text-center">By continuing you agree to our Terms & Privacy.</p>
         </div>
+        <div className="mt-4 text-sm text-center">
+          {isCreate ? (
+            <span>Already have an account? <button onClick={()=>router.push("auth/signin")} className="underline">Sign in</button></span>
+          ) : (
+            <span>New here? <button onClick={()=>router.push("auth/create")} className="underline">Create account</button></span>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ------------------------------
+// Reusable UI
+// ------------------------------
+function Chip({ children, className="" }) {
+  return <span className={`rounded-full bg-zinc-900 text-white text-xs px-3 py-1 ${className}`}>{children}</span>;
+}
+
+function ScoreChip({ value }) {
+  return (
+    <div className="rounded-full bg-white/90 backdrop-blur border border-zinc-200 px-3 py-1 text-sm font-semibold shadow-sm">
+      {value}
+    </div>
+  );
+}
+
+function SectionTitle({ title, subtitle }) {
+  return (
+    <div className="py-6">
+      <h2 className="text-2xl md:text-3xl font-semibold tracking-tight">{title}</h2>
+      <p className="mt-1 text-zinc-600">{subtitle}</p>
+    </div>
+  );
+}
+
+function Input({ label, type="text", placeholder }) {
+  return (
+    <label className="block text-sm">
+      <span className="text-zinc-700">{label}</span>
+      <input type={type} placeholder={placeholder} className="mt-1 w-full rounded-xl border border-zinc-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-zinc-400"/>
+    </label>
+  );
+}
+
+function Textarea({ label, placeholder }) {
+  return (
+    <label className="block text-sm">
+      <span className="text-zinc-700">{label}</span>
+      <textarea placeholder={placeholder} rows={4} className="mt-1 w-full rounded-xl border border-zinc-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-zinc-400"/>
+    </label>
+  );
+}
+
+function Modal({ open, onClose, children }) {
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div className="fixed inset-0 z-40" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+          <div className="absolute inset-0 bg-black/30" onClick={onClose} />
+          <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 20, opacity: 0 }} transition={{ type: "spring", stiffness: 280, damping: 26 }} className="absolute bottom-0 left-0 right-0 md:top-1/2 md:-translate-y-1/2 md:mx-auto md:max-w-lg bg-white rounded-t-2xl md:rounded-2xl p-6 shadow-xl">
+            <button onClick={onClose} className="absolute right-3 top-3 rounded-full p-1 hover:bg-zinc-100"><X className="h-4 w-4"/></button>
+            {children}
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
+// Small inline icons (to avoid extra deps)
+function BriefIcon(props){
+  return (<svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 13V7a2 2 0 0 0-2-2h-3V3H8v2H5a2 2 0 0 0-2 2v6"/><path d="M3 13a4 4 0 0 0 4 4h10a4 4 0 0 0 4-4"/></svg>);
+}
+function CartIcon(props){
+  return (<svg {...props} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39A2 2 0 0 0 9.64 16h7.72a2 2 0 0 0 1.96-1.61L22 6H6"/></svg>);
+}
+
+function SiteFooter() {
+  return (
+    <footer className="border-t border-zinc-200 mt-8">
+      <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-8 py-10 grid md:grid-cols-4 gap-8 text-sm">
+        <div>
+          <div className="flex items-center gap-2 font-semibold"><span className="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-black text-white">A*</span> Awards Hub</div>
+          <p className="mt-2 text-zinc-600">Inspiration & recognition platform for digital design excellence (demo).</p>
+        </div>
+        <div>
+          <h4 className="font-semibold">Explore</h4>
+          <ul className="mt-2 space-y-1 text-zinc-700">
+            <li>Nominees</li>
+            <li>Winners</li>
+            <li>Collections</li>
+          </ul>
+        </div>
+        <div>
+          <h4 className="font-semibold">Community</h4>
+          <ul className="mt-2 space-y-1 text-zinc-700">
+            <li>Directory</li>
+            <li>Jobs</li>
+            <li>Market</li>
+            <li>Academy</li>
+          </ul>
+        </div>
+        <div>
+          <h4 className="font-semibold">Legal</h4>
+          <ul className="mt-2 space-y-1 text-zinc-700">
+            <li>Terms</li>
+            <li>Privacy</li>
+            <li>Brand</li>
+          </ul>
+        </div>
+      </div>
+      <div className="border-t border-zinc-200 py-4 text-center text-xs text-zinc-500">Demo UI built with React, Tailwind, and Framer Motion.</div>
     </footer>
-
-
-    <script src="index.js"></script>
-    
-
-</body>
-</html>
-
+  );
+}
