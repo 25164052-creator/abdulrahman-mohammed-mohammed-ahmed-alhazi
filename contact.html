@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تواصل معي - </title>
+    <link rel="stylesheet" href="../css/pag_css/contact.css">
+    <link rel="stylesheet" href="../css/style.css">
+    
+</head>
+<body>
+    <!-- شريط التنقل -->
+    <nav class="navbar">
+
+        <div class="nav-container">
+
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">الرئيسية</a></li>
+                <li><a href="about.html" class="nav-link"> عني</a></li>
+                <li><a href="skills.html" class="nav-link">المهارات</a></li>
+                <li><a href="projects.html" class="nav-link">المشاريع</a></li>
+                <li><a href="contact.html" class="nav-link">تواصل معنا</a></li>
+                <li><a href="login.html" class="nav-link">تسجيل الدخول</a></li>
+                <li><a href="sigin.html" class="nav-link">انشاء حساب</a></li>
+            </ul>
+            <a href="index.html" class="logo">A.Rahman_Al-Hazi</a>
+        </div>
+        
+    </nav>
+
+    <!-- القسم الرئيسي -->
+    <section class="contact-hero">
+        <div class="container">
+            <h1 style="font-size: 3rem; margin-bottom: 1rem;">تواصل معي</h1>
+            <p style="font-size: 1.3rem; opacity: 0.9;">أسعد دائماً بالتواصل معك ومناقشة الفرص والمشاريع الجديدة</p>
+        </div>
+    </section>
+
+    <!-- محتوى التواصل -->
+    <section class="contact-content">
+        <div class="container">
+            <div class="contact-grid">
+                <!-- معلومات التواصل -->
+                <div class="contact-info">
+                    <h2 class="section-title">معلومات التواصل</h2>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">📧</div>
+                        <div class="contact-details">
+                            <h3>البريد الإلكتروني</h3>
+                            <p><a href="mailto:your.email@example.com">Al_Hazi@gmail.com</a></p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">📱</div>
+                        <div class="contact-details">
+                            <h3>رقم الهاتف</h3>
+                            <p><a href="tel:+966501234567">788888887 967+</a></p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">📍</div>
+                        <div class="contact-details">
+                            <h3>الموقع</h3>
+                            <p>صنعاء الجمهورية اليمنية </p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <div class="contact-icon">🕒</div>
+                        <div class="contact-details">
+                            <h3>ساعات العمل</h3>
+                            <p>السبت - الاربعاء: 6:00 ص - 6:00 م</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!--  التواصل -->
+                <div class="contact-form">
+                    <h2 class="section-title">أرسل رسالة</h2>
+                    
+                    <form id="contactForm" onsubmit="handleSubmit(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">الاسم الأول</label>
+                                <input type="text" class="form-input" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">الاسم الأخير</label>
+                                <input type="text" class="form-input" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">البريد الإلكتروني</label>
+                            <input type="email" class="form-input" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">الموضوع</label>
+                            <input type="text" class="form-input" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label">الرسالة</label>
+                            <textarea class="form-textarea" required placeholder="اكتب رسالتك هنا..."></textarea>
+                        </div>
+                        
+                        <button type="submit" class="submit-btn">إرسال الرسالة</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم وسائل التواصل الاجتماعي -->
+    <section class="social-section">
+        <div class="container">
+            <h2 style="text-align: center; color: var(--primary-red); font-size: 2.5rem; margin-bottom: 1rem;">تابعني على</h2>
+            <p style="text-align: center; color: var(--dark-gray); font-size: 1.2rem;">تواصل معي عبر منصات التواصل الاجتماعي</p>
+            
+            <div class="social-grid">
+                <!-- LinkedIn -->
+                <div class="social-card">
+                    <div class="social-icon">💼</div>
+                    <h3 class="social-title">LinkedIn</h3>
+                    <p class="social-handle">@Al_Hazi-linkedin</p>
+                    <a href="#" class="social-link">تابعني</a>
+                </div>
+                
+                <!-- GitHub -->
+                <div class="social-card">
+                    <div class="social-icon">💻</div>
+                    <h3 class="social-title">GitHub</h3>
+                    <p class="social-handle">@Al_Hazi-github</p>
+                    <a href="#" class="social-link">تابعني</a>
+                </div>
+                
+                <!-- Twitter -->
+                <div class="social-card">
+                    <div class="social-icon">🐦</div>
+                    <h3 class="social-title">Twitter</h3>
+                    <p class="social-handle">@Al_Hazi-twitter</p>
+                    <a href="#" class="social-link">تابعني</a>
+                </div>
+                
+                <!-- Instagram -->
+                <div class="social-card">
+                    <div class="social-icon">📷</div>
+                    <h3 class="social-title">Instagram</h3>
+                    <p class="social-handle">@Al_Hazi-instagram</p>
+                    <a href="#" class="social-link">تابعني</a>
+                </div>
+                
+                <!-- YouTube -->
+                <div class="social-card">
+                    <div class="social-icon">📺</div>
+                    <h3 class="social-title">YouTube</h3>
+                    <p class="social-handle">A.Rahman_Al_Hazi</p>
+                    <a href="#" class="social-link">اشترك</a>
+                </div>
+                
+                <!-- Behance -->
+                <div class="social-card">
+                    <div class="social-icon">🎨</div>
+                    <h3 class="social-title">Behance</h3>
+                    <p class="social-handle">@Al_Hazi-behance</p>
+                    <a href="#" class="social-link">تابعني</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم الخريطة -->
+    <section class="map-section">
+        <div class="container">
+            <div class="map-container">
+                <h2 style="color: var(--primary-red); margin-bottom: 1rem;">موقعي</h2>
+                <p style="color: var(--dark-gray); margin-bottom: 1rem;">يمكنك العثور عليّ في صنعاء الجمهورية اليمنية </p>
+                <div class="map-placeholder">
+                    🗺️ خريطة الموقع
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- التذييل -->
+   
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 A.Rahman_Al-Hazi. جميع الحقوق محفوظة.</p>
+            
+        </div>
+    </footer>
+
+    <script src="../jeve/contact.js"></script>
+
+
+
+</body>
+</html>
+

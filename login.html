@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول</title>
+    <link rel="stylesheet" href="../css/pag_css/login.css">
+    <link rel="stylesheet" href="../css/style.css">
+    
+</head>
+<body>
+  
+      <nav class="navbar">
+
+        <div class="nav-container">
+
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">الرئيسية</a></li>
+                <li><a href="about.html" class="nav-link"> عني</a></li>
+                <li><a href="skills.html" class="nav-link">المهارات</a></li>
+                <li><a href="projects.html" class="nav-link">المشاريع</a></li>
+                <li><a href="contact.html" class="nav-link">تواصل معنا</a></li>
+                <li><a href="login.html" class="nav-link">تسجيل الدخول</a></li>
+                <li><a href="sigin.html" class="nav-link">انشاء حساب</a></li>
+            </ul>
+            <a href="index.html" class="logo">A.Rahman_Al-Hazi</a>
+        </div>
+        
+    </nav>
+  
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1 class="login-title">مرحباً بك</h1>
+                <p class="login-subtitle">ابد رحلتك</p>
+            </div>
+            
+            <form class="login-form" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <input type="text" class="form-input" placeholder=" " required>
+                    <label class="form-label">User Name</label>
+                </div>
+                
+                <div class="form-group">
+                    <input type="password" class="form-input" placeholder=" " required>
+                    <label class="form-label">Password</label>
+                </div>
+                
+                <div class="remember-me">
+                    <input type="checkbox" class="checkbox" id="remember">
+                </div>
+                
+                <button type="submit" class="login-btn">تسجيل الدخول</button>
+            </form>
+            
+            <div class="login-footer">
+                <p>ليس لديك حساب؟ <a href="./sigin.html" class="login-link">إنشاء حساب جديد</a></p>
+            </div>
+        </div>
+    </div>
+
+     <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 A.Rahman_Al-Hazi. جميع الحقوق محفوظة.</p>
+            
+        </div>
+    </footer>
+    <script src="../jeve/login.js"></script>
+    
+    
+</body>
+</html>
+

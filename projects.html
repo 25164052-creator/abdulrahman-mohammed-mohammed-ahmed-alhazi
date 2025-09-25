@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project</title>
+    <link rel="stylesheet" href="../css/pag_css/project.css">
+    <link rel="stylesheet" href="../css/style.css">
+ 
+</head>
+<body>
+    <!-- شريط التنقل -->
+     <nav class="navbar">
+
+        <div class="nav-container">
+
+            <ul class="nav-menu">
+                <li><a href="index.html" class="nav-link">الرئيسية</a></li>
+                <li><a href="about.html" class="nav-link"> عني</a></li>
+                <li><a href="skills.html" class="nav-link">المهارات</a></li>
+                <li><a href="projects.html" class="nav-link">المشاريع</a></li>
+                <li><a href="contact.html" class="nav-link">تواصل معنا</a></li>
+                <li><a href="login.html" class="nav-link">تسجيل الدخول</a></li>
+                <li><a href="sigin.html" class="nav-link">انشاء حساب</a></li>
+            </ul>
+            <a href="index.html" class="logo">A.Rahman_Al-Hazi</a>
+        </div>
+        
+    </nav>
+
+    <!-- القسم الرئيسي -->
+    <section class="projects-hero">
+        <div class="container">
+            <h1 style="font-size: 3rem; margin-bottom: 1rem;">مشاريعي</h1>
+            <p style="font-size: 1.3rem; opacity: 0.9;">استكشف مجموعة من أهم المشاريع التي عملت عليها</p>
+        </div>
+    </section>
+
+    <!-- محتوى المشاريع -->
+    <section class="projects-content">
+        <div class="container">
+            <!-- فلترة المشاريع -->
+            <div class="filter-section">
+                <h2 style="color: var(--primary-red); margin-bottom: 1rem;">تصفية المشاريع</h2>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">جميع المشاريع</button>
+                    <button class="filter-btn" data-filter="web">مواقع ويب</button>
+                    <button class="filter-btn" data-filter="mobile">تطبيقات موبايل</button>
+                    <button class="filter-btn" data-filter="design">تصميم</button>
+                </div>
+            </div>
+
+            <!-- شبكة المشاريع -->
+            <div class="projects-grid">
+                <!-- مشروع 1 -->
+                <div class="project-card" data-category="web">
+                    <div class="project-image">🌐</div>
+                    <div class="project-content">
+                        <h3 class="project-title">موقع تجارة إلكترونية</h3>
+                        <p class="project-description">
+                            موقع تجارة إلكترونية متكامل مع نظام إدارة المنتجات والطلبات، وواجهة مستخدم حديثة ومتجاوبة.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">React</span>
+                            <span class="tech-tag">Node.js</span>
+                            <span class="tech-tag">MongoDB</span>
+                            <span class="tech-tag">Stripe</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link link-demo">عرض المشروع</a>
+                            <a href="#" class="project-link link-code">الكود المصدري</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- مشروع 2 -->
+                <div class="project-card" data-category="mobile">
+                    <div class="project-image">📱</div>
+                    <div class="project-content">
+                        <h3 class="project-title">تطبيق إدارة المهام</h3>
+                        <p class="project-description">
+                            تطبيق موبايل لإدارة المهام اليومية مع إمكانية المزامنة السحابية والتذكيرات الذكية.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Flutter</span>
+                            <span class="tech-tag">Firebase</span>
+                            <span class="tech-tag">Dart</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link link-demo">تحميل التطبيق</a>
+                            <a href="#" class="project-link link-code">الكود المصدري</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- مشروع 3 -->
+                <div class="project-card" data-category="web">
+                    <div class="project-image">📊</div>
+                    <div class="project-content">
+                        <h3 class="project-title">لوحة تحكم تحليلية</h3>
+                        <p class="project-description">
+                            لوحة تحكم تفاعلية لعرض البيانات والإحصائيات مع رسوم بيانية متقدمة وتقارير مفصلة.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Vue.js</span>
+                            <span class="tech-tag">D3.js</span>
+                            <span class="tech-tag">Python</span>
+                            <span class="tech-tag">PostgreSQL</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link link-demo">عرض المشروع</a>
+                            <a href="#" class="project-link link-code">الكود المصدري</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- مشروع 4 -->
+                <div class="project-card" data-category="design">
+                    <div class="project-image">🎨</div>
+                    <div class="project-content">
+                        <h3 class="project-title">هوية بصرية لشركة</h3>
+                        <p class="project-description">
+                            تصميم هوية بصرية متكاملة لشركة ناشئة تشمل الشعار والألوان والخطوط ومواد التسويق.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Adobe Illustrator</span>
+                            <span class="tech-tag">Photoshop</span>
+                            <span class="tech-tag">Figma</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link link-demo">عرض التصميم</a>
+                            <a href="#" class="project-link link-code">ملفات التصميم</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- مشروع 5 -->
+                <div class="project-card" data-category="web">
+                    <div class="project-image">🏥</div>
+                    <div class="project-content">
+                        <h3 class="project-title">نظام إدارة المستشفى</h3>
+                        <p class="project-description">
+                            نظام شامل لإدارة المستشفيات يشمل إدارة المرضى والمواعيد والملفات الطبية والفواتير.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">Laravel</span>
+                            <span class="tech-tag">MySQL</span>
+                            <span class="tech-tag">Bootstrap</span>
+                            <span class="tech-tag">jQuery</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link link-demo">عرض النظام</a>
+                            <a href="#" class="project-link link-code">الكود المصدري</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- مشروع 6 -->
+                <div class="project-card" data-category="mobile">
+                    <div class="project-image">🍕</div>
+                    <div class="project-content">
+                        <h3 class="project-title">تطبيق توصيل طعام</h3>
+                        <p class="project-description">
+                            تطبيق توصيل طعام مع نظام تتبع الطلبات والدفع الإلكتروني وتقييم المطاعم.
+                        </p>
+                        <div class="project-tech">
+                            <span class="tech-tag">React Native</span>
+                            <span class="tech-tag">Redux</span>
+                            <span class="tech-tag">Maps API</span>
+                        </div>
+                        <div class="project-links">
+                            <a href="#" class="project-link link-demo">تحميل التطبيق</a>
+                            <a href="#" class="project-link link-code">الكود المصدري</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- قسم الإحصائيات -->
+    <section class="stats-section">
+        <div class="container">
+
+ <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Quick statistics</h2>
+            <p style="font-size: 1.2rem; opacity: 0.9;">A quick look at my achievements</p>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">7+</div>
+                    <div class="stat-label">Years of experience</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7+</div>
+                    <div class="stat-label">Completed project</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7+</div>
+                    <div class="stat-label">Masterful skill</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7+</div>
+                    <div class="stat-label">Certificate obtained</div>
+                </div>
+            
+
+                <div class="stat-item">
+                    <div class="stat-number">80%</div>
+                    <div class="stat-label">معدل الإنجاز</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+  <footer class="footer">
+        <div class="container">
+            <p>&copy; 2025 A.Rahman_Al-Hazi. جميع الحقوق محفوظة.</p>
+            
+        </div>
+    </footer>
+    <script src="../jeve/projects.js"></script>
+    
+</body>
+</html>
+
